@@ -23,12 +23,12 @@ def get_HKEX_token_and_qid():
     string = str(soup.find_all('script')[20])
     token_script = string.split(';')
     token = token_script[3].replace('\r\n', '').replace('return', '').replace('"', '').strip()
-    print(token)
+    print("Website Token: " + token)
 
     now = dt.datetime.now(tz)
     # the required qid of HKEX is the timestamp of now times 1000
     qid = str(int(now.timestamp() * 1000))
-    print(qid)
+    print("Website qid: "+ qid)
     return token, qid
 
 def request_option_raw_data(month):
@@ -44,14 +44,13 @@ def request_option_raw_data(month):
     raw = json.loads(soup2)
     return raw
 
-def main():
-    raw = request_option_raw_data('072021') # get raw_data from HKEX
+def request_option_single_month(month):
+    raw = request_option_raw_data(month) # get raw_data from HKEX
 
     # First define a empty dict with columns below, each contains a empty list
     dicts = {'Strike': [], 'Call_bid': [], 'Call_ask': [], 'Call_last': [], 'Call_vol': [], 'Call_oi': [], 'Call_iv': [], 'Put_bid': [],
              'Put_ask': [], 'Put_last': [], 'Put_vol': [], 'Put_oi': [], 'Put_iv': []}
 
-    print(raw)
     for row in raw['data']['optionlist']:
         strike = row['strike']
         dicts['Strike'].append(strike)  # append strike price data into 'strike' column in the dict
@@ -64,5 +63,3 @@ def main():
     final.to_csv('option_data.csv')
     print(final)
 
-if __name__ == "__main__":
-    main()
