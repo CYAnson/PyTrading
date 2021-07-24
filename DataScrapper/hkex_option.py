@@ -60,6 +60,5 @@ def request_option_single_month(month):
             dicts[put_col].append(put_data)
 
     final = pd.DataFrame(dicts)  # Convert dict to Dataframe
-    final.to_csv('option_data.csv')
-    print(final)
+    return final
 
