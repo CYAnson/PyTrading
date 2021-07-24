@@ -31,7 +31,7 @@ def get_HKEX_token_and_qid():
     #print("Website qid: "+ qid)
     return token, qid
 
-def request_option_raw_data(month, product):
+def get_option_raw_data(month, product):
     # month format {MMYYYY}
     token, qid = get_HKEX_token_and_qid()
     link = f'https://www1.hkex.com.hk/hkexwidget/data/getderivativesoption?lang=eng&token={token}&ats={product}&con={month}&fr=17100&to=37200&type=0&qid={qid}&callback=jQuery'
@@ -45,7 +45,7 @@ def request_option_raw_data(month, product):
     return raw
 
 def request_option_single_month_data(month, product):
-    raw = request_option_raw_data(month, product) # get raw_data from HKEX
+    raw = get_option_raw_data(month, product) # get raw_data from HKEX
 
     # First define a empty dict with columns below, each contains a empty list
     dicts = {'Strike': [], 'Call_bid': [], 'Call_ask': [], 'Call_last': [], 'Call_vol': [], 'Call_oi': [], 'Call_iv': [], 'Put_bid': [],
@@ -90,7 +90,7 @@ def get_option_all_month_data(month, product,from_='null',to_='null'):
   return api_raw
 
 
-def request_option_all_month_data(product):
+def request_option_bulk_month_data(product):
 
     month_df = get_option_all_month(product)
 
@@ -118,6 +118,5 @@ def request_option_all_month_data(product):
         final.to_csv(f'{product}_option_data_{month}.csv')
         print(final)
 
-
 if __name__ == "__main__":
-    request_option_all_month_data('HSI')
+    request_option_bulk_month_data('HSI')
