@@ -8,6 +8,8 @@ from datetime import datetime, timedelta
 import json
 import pytz
 
+
+
 tz = pytz.timezone('Asia/Hong_Kong')
 
 def get_HKEX_token_and_qid():
@@ -23,13 +25,14 @@ def get_HKEX_token_and_qid():
     string = str(soup.find_all('script')[20])
     token_script = string.split(';')
     token = token_script[3].replace('\r\n', '').replace('return', '').replace('"', '').strip()
-    #print("Website Token: " + token)
+    # print("Website Token: " + token)
 
     now = dt.datetime.now(tz)
     # the required qid of HKEX is the timestamp of now times 1000
     qid = str(int(now.timestamp() * 1000))
-    #print("Website qid: "+ qid)
+    # print("Website qid: "+ qid)
     return token, qid
+
 
 def get_option_raw_data(month, product):
     # month format {MMYYYY}
@@ -61,6 +64,7 @@ def request_option_single_month_data(month, product):
 
     final = pd.DataFrame(dicts)  # Convert dict to Dataframe
     return final
+
 
 def get_option_all_month(product):
     token, qid = get_HKEX_token_and_qid()
@@ -118,5 +122,3 @@ def request_option_bulk_month_data(product):
         final.to_csv(f'{product}_option_data_{month}.csv')
         print(final)
 
-if __name__ == "__main__":
-    request_option_bulk_month_data('HSI')
