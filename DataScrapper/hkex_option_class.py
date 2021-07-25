@@ -72,9 +72,7 @@ class hkex_option_data():
         month_list_raw = json.loads(month_list_soup)
 
         month_df = pd.DataFrame(month_list_raw['data']['conlist'])  # Turn into dataframe
-        return month_df
 
-    def get_option_all_month_data(self, month, product, from_='null', to_='null'):
         # Define function for downloading option data
         # Step1: from_ and to_ are inputs for hang seng index min and max range, which are difference among contract months, 'null' are the default values
         # if we input 'null' for from_ and to_, we will get the suggested min and max index range from the link
@@ -85,7 +83,39 @@ class hkex_option_data():
         api_soup = bs(api_r.text, 'html.parser')
         api_soup = api_soup.text[api_soup.text.find('{'):-1]
         api_raw = json.loads(api_soup)
-        return api_raw
+        return month_df, api_raw
+
+    def request_option_bulk_month_data(product):
+
+        month_df = get_option_all_month(product)
+
+        for month in month_df['id']:
+            print(f'Downloading {month}')
+            get_index_range = get_option_all_month_data(month, product)  # Step1
+            min_index, max_index = get_index_range['data']['min'].replace(',', ''), get_index_range['data'][
+                'max'].replace(
+                ',', '')
+            api_raw = get_option_all_month_data(month, product, from_=min_index, to_=max_index)  # Step2
+
+            # Create empty dicts with a new column: 'months'
+            dicts = {'month': [], 'Strike': [], 'Call_bid': [], 'Call_ask': [], 'Call_last': [], 'Call_vol': [],
+                     'Call_oi': [],
+                     'Call_iv': [], 'Put_bid': [], 'Put_ask': [], 'Put_last': [], 'Put_vol': [], 'Put_oi': [],
+                     'Put_iv': []}
+            for row in api_raw['data']['optionlist']:
+                strike = row['strike']
+                dicts['Strike'].append(strike)  # append strike price data into 'strike' column in the dict
+                dicts['month'].append(month)
+                for call_data, call_col in zip(row['c'].values(), [*dicts.keys()][2:8]):  # for call option data
+                    dicts[call_col].append(call_data)
+                for put_data, put_col in zip(row['p'].values(), [*dicts.keys()][8:]):  # for put option data
+                    dicts[put_col].append(put_data)
+
+            final = pd.DataFrame(dicts)
+            # Save all months files to csv
+            final.to_csv(f'{product}_option_data_{month}.csv')
+            return final
+    
 
 
 if __name__ == "__main__":
