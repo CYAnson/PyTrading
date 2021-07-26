@@ -122,6 +122,3 @@ class hkex_option_data():
     
 
 
-if __name__ == "__main__":
-    option_scp = hkex_option_data()
-    option_df = option_scp.request_option_bulk_month_data("HSI")

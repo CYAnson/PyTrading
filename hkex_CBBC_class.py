@@ -34,7 +34,3 @@ class hkex_CBBC_data():
             print(cbbc_full)
             return cbbc_full
 
-
-if __name__ == "__main__":
-    CBBC = hkex_CBBC_data()
-    cbbc_full = CBBC.get_CBBCbulk_zip_from_hkex("2021-01-01", "2021-08-01", 'Y')
