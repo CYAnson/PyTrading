@@ -62,7 +62,7 @@ class hkex_option_data():
         df = pd.DataFrame(option_dicts)  # Convert dict to Dataframe
         return df
 
-    def get_option_all_month_data(self, month, product, from_='null', to_='null'):
+    def get_option_all_month(self, product):
         month_list_link = f'https://www1.hkex.com.hk/hkexwidget/data/getoptioncontractlist?lang=eng&token={self.token}&ats={product}&type=0&qid={self.qid}&callback=jQuery'
         session = requests.session()
 
@@ -72,30 +72,34 @@ class hkex_option_data():
         month_list_raw = json.loads(month_list_soup)
 
         month_df = pd.DataFrame(month_list_raw['data']['conlist'])  # Turn into dataframe
+        print(month_df)
+        return month_df
+
+
+    def get_option_all_month_data(self, month, product, from_='null', to_='null'):
+        api_link = f'https://www1.hkex.com.hk/hkexwidget/data/getderivativesoption?lang=eng&token={self.token}&ats={product}&con={month}&fr={from_}&to={to_}&type=0&qid={self.qid}&callback=jQuery'
+        api_r = requests.get(api_link, timeout=5)
+        api_soup = bs(api_r.text, 'html.parser')
+        api_soup = api_soup.text[api_soup.text.find('{'):-1]
+        api_raw = json.loads(api_soup)
+        print(api_raw)
+        return api_raw
+
+    def request_option_bulk_month_data(self, product):
 
         # Define function for downloading option data
         # Step1: from_ and to_ are inputs for hang seng index min and max range, which are difference among contract months, 'null' are the default values
         # if we input 'null' for from_ and to_, we will get the suggested min and max index range from the link
         # Step2: We then plug in the suggested range to the api link again to get the option data for all months
 
-        api_link = f'https://www1.hkex.com.hk/hkexwidget/data/getderivativesoption?lang=eng&token={self.token}&ats={product}&con={month}&fr={from_}&to={to_}&type=0&qid={self.qid}&callback=jQuery'
-        api_r = requests.get(api_link, timeout=5)
-        api_soup = bs(api_r.text, 'html.parser')
-        api_soup = api_soup.text[api_soup.text.find('{'):-1]
-        api_raw = json.loads(api_soup)
-        return month_df, api_raw
-
-    def request_option_bulk_month_data(product):
-
-        month_df = get_option_all_month(product)
+        month_df = self.get_option_all_month(product)
 
         for month in month_df['id']:
             print(f'Downloading {month}')
-            get_index_range = get_option_all_month_data(month, product)  # Step1
+            get_index_range = self.get_option_all_month_data(month, product)  # Step1
             min_index, max_index = get_index_range['data']['min'].replace(',', ''), get_index_range['data'][
-                'max'].replace(
-                ',', '')
-            api_raw = get_option_all_month_data(month, product, from_=min_index, to_=max_index)  # Step2
+                'max'].replace(',', '')
+            api_raw = self.get_option_all_month_data(month, product, from_=min_index, to_=max_index)  # Step2
 
             # Create empty dicts with a new column: 'months'
             dicts = {'month': [], 'Strike': [], 'Call_bid': [], 'Call_ask': [], 'Call_last': [], 'Call_vol': [],
@@ -114,11 +118,10 @@ class hkex_option_data():
             final = pd.DataFrame(dicts)
             # Save all months files to csv
             final.to_csv(f'{product}_option_data_{month}.csv')
-            return final
+            print(final)
     
 
 
 if __name__ == "__main__":
     option_scp = hkex_option_data()
-    option_df =option_scp.request_option_single_month_data('072021', 'HSI')
-    option_df.to_csv('option_data_0721.csv')
+    option_df = option_scp.request_option_bulk_month_data("HSI")
