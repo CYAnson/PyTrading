@@ -4,7 +4,6 @@ from ibapi.wrapper import EWrapper
 from ibapi.contract import Contract
 from ibapi.order import *
 from ibapi.ticktype import TickTypeEnum
-from tradingRobot.cloud_googlesheet import sendDataToGoogleSheet as goog
 from threading import Timer
 import pandas as pd
 import threading
@@ -14,10 +13,10 @@ from datetime import datetime
 def getstrategy(qty, orderType):
 
     #signal_indicator = int(os.environ.get('signal'))
-    signal_sheet = str(goog.goog_worksheet_name())
-    signal_indicator = goog.get_goog_SheetValue("程式交易紀錄", signal_sheet)
-    print(signal_indicator)
+
     #signal_indicator = int(-1)
+
+    signal_indicator = 1
 
     if signal_indicator == 1:
         signal = True
@@ -27,7 +26,8 @@ def getstrategy(qty, orderType):
         action = "SELL"
     else:
         signal = False
-        action = 0
+        action = ""
+
 
     signal = signal
     action = action
@@ -51,8 +51,8 @@ class TestApp(EWrapper, EClient):
         # self.coverlow = 0
         # self.coverhigh = 0
         self.hsi_position = 0
-        self.signal, self.action, self.qty, self.orderType = getstrategy(5, "LMT")
-        self.symbol, self.secType, self.currency, self. exchange, self.lastTradeDateOrContractMonth = gettradeproduct("HSI", "FUT", "HKD", "HKFE", "20201127")
+        self.signal, self.action, self.qty, self.orderType = getstrategy(1, "MKT")
+        self.symbol, self.secType, self.currency, self. exchange, self.lastTradeDateOrContractMonth = gettradeproduct("HSI", "FUT", "HKD", "HKFE", "20210830")
 
     def error(self,reqId,errorCode,errorString):
         print(datetime.fromtimestamp(int(datetime.now().timestamp())),'Error: ',reqId,' ',errorCode,' ',errorString)
@@ -185,14 +185,14 @@ class TestApp(EWrapper, EClient):
 def ib_main():
     app = TestApp()
     app.nextOrderId = 0
-    app.connect('127.0.0.1', 4002, 0)
+    app.connect('127.0.0.1', 7496, 0)
 
     contract = Contract()
     contract.symbol = "HSI"
     contract.secType = "FUT"
     contract.currency = "HKD"
     contract.exchange = "HKFE"
-    contract.lastTradeDateOrContractMonth = "20201127"
+    contract.lastTradeDateOrContractMonth = "20210830"
 
     # Call stop() after 3 seconds to disconnect the program
 
