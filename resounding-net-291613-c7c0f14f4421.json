@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "resounding-net-291613",
+  "private_key_id": "c7c0f14f4421c355534e97f87a5a5bb2cd168ca5",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDZa+1tRcHlEBog\nopDKUSgcxTYyagfaVMJyijdXXNevLsT/3cXN+eZuXDVqVIhFqIktf31yjk/YRi9v\nSzRDe+55Md6nHDME2whCM/jx0I1Dfl0HCxuvo5yqB89PcCnL3Du8rRU/x+MImP7k\nckTdnpK4ScqM+Pue9u9K4kIy328QPJZPFV9cpinii0slr2kuHOVykD4HJCiMxQLP\nF9/6PK8w7oe0XMftZO7yAQia+yQigVaw+i/IOv51Sx82TcPesx9BJUKdhYkkEUcr\nv0ItFaXr7Quk/JyQUT7V28lU8duCR3tTQSJnxjX4Ptr6ukH+UEC7HWqj5aHhyvr8\nDpgqFlQrAgMBAAECggEAaHUsfG/j0IgUbXJ9Kt6j7XKob782Z6SKSVpzbTMrYryP\nJDjqBGRYW9RMS3oygHkQ8v2KCUQrQ0axGoDgqr17nNmjVdk7/8y14oyywYcHn5Ix\n4qTpF9D8/0nCRbGnOwzj3GmxyFNiFerfp2TpBird5dF6EZG73itYWztqP6POadc3\nKkUUJxka5vWtE/DjvmTKH0e2vUYNWiZdQBSyxQvj1tYsx1FtOCaH8vbmPyjpaOOS\n7a0+t086Ln6YJJm9AYbAjWaQl8+3VjDC9AQAorLSAfqkcACwglTjnKMIaV7xoXih\njECMJt0KMwb9QaLycJYmVhh6/YI+z6RiLxDmdo6CeQKBgQD0+3wUAdbsueEvD/rr\nZ7uwpcSctV8HRSmPK9IJXlnNKoInPOJZB7KRFCzoRd9txYIuci9igyymDqZPenY3\neuJnk//ADdcZPUykl59qutM/1P6BXzx7Chxo1OppN5S0mxlfHJ9S1NeQrLVr5324\nxCcy54qOQtIfldiQzZ6jswNEWQKBgQDjMyHBu6ADWLw5XZ+VEgqlJGT5hd0X8b1W\nFHUdOFXjqmT7MZMrepFRzx8wawjrEAFfzo7LuG+cNQ7Rx/MAA+TdOLvIDJ+1Ix+0\nCmUEuShMXczAJdh0AfcTzqaTIllZ2F5LlzFb7lNDh5psnE95sIkCq2HXcKXwr1k0\npIYIcjRcIwKBgQDUg2/AH1Rk6F4qKC+fk83iT/p9gmxb7yg9FWNPUzSNYImlJhCn\n8KB7b8gA+dP28nWaet0WFPpfVqf4nB/+wq+x8FXUMW1dbKqWwRy+RjDI16ira4UY\nqs24NrLd8SQjg8P/mOGwxgf1bYy3fQm3hRkH9IliHR8P3ToPav9pu/liiQKBgGIJ\nMzy8cDxhcr6yJmUVpuBBhwygdZmaZx+YrjxQjccyRGabqqxtM/2ACS5EUVHU0zL7\nF2TSjd5yipV82N8dzwiiLW0R/WwU3t46SgKyvq/NHcefzPmpy2qRlhERFksNcQrf\nD55ihS0zey/4dtbElSpAt3RWGFR15WEwyOEmHm/PAoGAT6P/Uc8sddVnyYv+9OoN\niHWKwaavT3yqstww7sKDIug47ce3E+06ucUisJcG0iUtvZtVVcXIKSgvMTS/1Lry\ndgT9QTks/44uysRgxfry/XksgdT1z26ZpaM3CSjOCIaWGJeTQ76kVxdz7w3LfOOn\nLv52A7P+IRBOXTQ6LwMOjd8=\n-----END PRIVATE KEY-----\n",
+  "client_email": "traderobot-report@resounding-net-291613.iam.gserviceaccount.com",
+  "client_id": "105241068877222064097",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/traderobot-report%40resounding-net-291613.iam.gserviceaccount.com"
+}
