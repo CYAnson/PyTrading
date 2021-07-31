@@ -9,6 +9,7 @@ import pandas as pd
 import threading
 import time
 from datetime import datetime
+from telegramBot import telegramBot
 
 def getstrategy(qty, orderType):
 
@@ -51,6 +52,8 @@ class TestApp(EWrapper, EClient):
         self.signal, self.action, self.qty, self.orderType = getstrategy(1, "MKT")
         self.symbol, self.secType, self.currency, self. exchange, self.lastTradeDateOrContractMonth = gettradeproduct("HSI", "FUT", "HKD", "HKFE", "20210830")
 
+        self.tgBot = telegramBot()
+
     def error(self,reqId,errorCode,errorString):
         print(datetime.fromtimestamp(int(datetime.now().timestamp())),'Error: ',reqId,' ',errorCode,' ',errorString)
         return
@@ -69,12 +72,15 @@ class TestApp(EWrapper, EClient):
         super().positionEnd()
         #print("PositionEnd")
 
-    def tickPrice(self, reqId, tickType, price, attrib):
+    """def tickPrice(self, reqId, tickType, price, attrib):
         #if TickTypeEnum.to_str(tickType) == "CLOSE": # eg: tickType = 1 (1=bid, 2=ask, 4=last, 6=high, 7=low, 9=close)
         #print('Tick Price.Ticker Id:', reqId, 'tickType:', TickTypeEnum.to_str(tickType), 'Price:', price)
 
         if TickTypeEnum.to_str(tickType) == "ASK" and int(price) != 0:
-            self.entryprice = int(price)
+            self.askprice = int(price)
+
+        if TickTypeEnum.to_str(tickType) == "BID" and int(price) != 0:
+            self.bidprice = int(price)
 
         if self.signal != False and self.hsi_position == 0:
             self.actionOrder()
@@ -89,7 +95,7 @@ class TestApp(EWrapper, EClient):
         else:
             print("No Signal Generated")
             pass
-        return
+        return"""
 
     def realtimeBar(self, reqId, time:int, open_: float, high: float, low: float, close: float,volume: int, wap: float, count: int):
         super().realtimeBar(reqId, time, open_, high, low, close, volume, wap, count)
@@ -100,14 +106,20 @@ class TestApp(EWrapper, EClient):
 
         if self.signal != False and self.hsi_position == 0:
             self.actionOrder()
-            print("Oredr: " + str(self.action) + " At " + str(self.entryprice))
+            entry_message = ("Oredr: " + str(self.action) + " At " + str(self.entryprice))
+            self.tgBot.sendSignal(entry_message)   # telegramBot send notification
+            print(entry_message)
         elif self.signal != False and self.hsi_position != 0:
             if self.hsi_position > 0:
                 self.coverOrder()
-                print("Cover: " + str(self.action) + " At " + str(self.coverprice))
+                cover_message1 = ("Cover: " + str(self.action) + " At " + str(self.coverprice))
+                self.tgBot.sendSignal(cover_message1)   # telegramBot send notification
+                print(cover_message1)
             else:
                 self.coverOrder()
-                print("Cover: " + str(self.action) + " At " + str(self.coverprice))
+                cover_message2 = ("Cover: " + str(self.action) + " At " + str(self.coverprice))
+                self.tgBot.sendSignal(cover_message2)   # telegramBot send notification
+                print(cover_message2)
         else:
             print("No Signal Generated")
             pass
@@ -201,4 +213,9 @@ def ib_main():
     app.run()
 
 if __name__=="__main__":
-    ib_main()
+    while True:
+        try:
+            ib_main()
+        except EOFError as e:
+            print(datetime.fromtimestamp(int(datetime.now().timestamp())), 'main() error due to :', type(e), e)
+        time.sleep(10)
