@@ -28,7 +28,6 @@ def getstrategy(qty, orderType):
         signal = False
         action = ""
 
-
     signal = signal
     action = action
 
@@ -48,8 +47,6 @@ class TestApp(EWrapper, EClient):
 
         self.signal =False # For placing Order
         self.entrtprice = 0
-        # self.coverlow = 0
-        # self.coverhigh = 0
         self.hsi_position = 0
         self.signal, self.action, self.qty, self.orderType = getstrategy(1, "MKT")
         self.symbol, self.secType, self.currency, self. exchange, self.lastTradeDateOrContractMonth = gettradeproduct("HSI", "FUT", "HKD", "HKFE", "20210830")
@@ -72,7 +69,7 @@ class TestApp(EWrapper, EClient):
         super().positionEnd()
         #print("PositionEnd")
 
-    """def tickPrice(self, reqId, tickType, price, attrib):
+    def tickPrice(self, reqId, tickType, price, attrib):
         #if TickTypeEnum.to_str(tickType) == "CLOSE": # eg: tickType = 1 (1=bid, 2=ask, 4=last, 6=high, 7=low, 9=close)
         #print('Tick Price.Ticker Id:', reqId, 'tickType:', TickTypeEnum.to_str(tickType), 'Price:', price)
 
@@ -92,15 +89,14 @@ class TestApp(EWrapper, EClient):
         else:
             print("No Signal Generated")
             pass
-        return"""
+        return
 
     def realtimeBar(self, reqId, time:int, open_: float, high: float, low: float, close: float,volume: int, wap: float, count: int):
         super().realtimeBar(reqId, time, open_, high, low, close, volume, wap, count)
         print("RealTimeBar. TickerId:", reqId, (time, -1, open_, high, low, close, volume, wap, count))
         print("MIDPOINT price: " + str(close))
-        self.entryprice = round(int(close))
-        self.coverlow = round(int(low))
-        self. coverhigh = round(int(high))
+        self.entryprice = round(int(open_))
+        self.coverprice = round(int(close))
 
         if self.signal != False and self.hsi_position == 0:
             self.actionOrder()
@@ -108,10 +104,10 @@ class TestApp(EWrapper, EClient):
         elif self.signal != False and self.hsi_position != 0:
             if self.hsi_position > 0:
                 self.coverOrder()
-                print("Cover: " + str(self.action) + " At " + str(self.coverhigh))
+                print("Cover: " + str(self.action) + " At " + str(self.coverprice))
             else:
                 self.coverOrder()
-                print("Cover: " + str(self.action) + " At " + str(self.coverlow))
+                print("Cover: " + str(self.action) + " At " + str(self.coverprice))
         else:
             print("No Signal Generated")
             pass
@@ -149,7 +145,7 @@ class TestApp(EWrapper, EClient):
         cover.signal = self.signal
         cover.action = "SELL"
         cover.totalQuantity = self.hsi_position
-        cover.lmtPrice = self.coverhigh # self.coverhigh
+        cover.lmtPrice = self.coverprice
         cover.orderType = self.orderType
         cover.OutsideRth = True
 
@@ -157,7 +153,7 @@ class TestApp(EWrapper, EClient):
             pass
         else:
             cover.action = "BUY"
-            cover.lmtPrice = self.coverlow # self.coverlow
+            cover.lmtPrice = self.coverprice
             cover.totalQuantity = self.hsi_position * -1
 
         self.placeOrder(self.nextOrderId, contract, cover)
@@ -187,12 +183,14 @@ def ib_main():
     app.nextOrderId = 0
     app.connect('127.0.0.1', 7496, 0)
 
+    symbol, secType, currency, exchange, lastTradeDateOrContractMonth = gettradeproduct("HSI", "FUT", "HKD", "HKFE", "20210830")
+
     contract = Contract()
-    contract.symbol = "HSI"
-    contract.secType = "FUT"
-    contract.currency = "HKD"
-    contract.exchange = "HKFE"
-    contract.lastTradeDateOrContractMonth = "20210830"
+    contract.symbol = symbol
+    contract.secType = secType
+    contract.currency = currency
+    contract.exchange = exchange
+    contract.lastTradeDateOrContractMonth = lastTradeDateOrContractMonth
 
     # Call stop() after 3 seconds to disconnect the program
 
