@@ -49,7 +49,7 @@ class TestApp(EWrapper, EClient):
         self.signal =False # For placing Order
         self.entrtprice = 0
         self.hsi_position = 0
-        self.signal, self.action, self.qty, self.orderType = getstrategy(1, "MKT")
+        self.signal, self.action, self.qty, self.orderType = getstrategy(2, "LMT")
         self.symbol, self.secType, self.currency, self. exchange, self.lastTradeDateOrContractMonth = gettradeproduct("HSI", "FUT", "HKD", "HKFE", "20210830")
 
         self.tgBot = telegramBot()
@@ -181,6 +181,14 @@ class TestApp(EWrapper, EClient):
               'RealizedPNL:', realizedPNL, 'AccountName:', accountName)"""
         return
 
+    def orderStatus(self, orderId: int, status:str, filled: float, remaining: float, avgFillPrice: float, permId: int,
+                    parentId: int, lastFillPrice: float, clientId: int, whyHeld: str, mktCapPrice: float):
+        super().orderStatus(orderId, status, filled, remaining, avgFillPrice, permId, parentId, lastFillPrice, clientId, whyHeld, mktCapPrice)
+        openOrder = "OrderStatus. Id:", orderId, "Status:", status, "Filled Order:", filled, "Remaining:", remaining, "AvgFillPrice:", avgFillPrice
+        print(openOrder)
+        self.tgBot.sendSignal(openOrder)
+
+        """+ Order Status Part"""
 
     def stop(self):
         self.reqAccountUpdates(False, "")
@@ -208,14 +216,14 @@ def ib_main():
 
     app.reqMktData(1, contract, "", False, False, [])
     app.reqRealTimeBars(1, contract, 1, "MIDPOINT", False, [])
+    app.reqAllOpenOrders()
     app.reqPositions()
     Timer(3, app.stop).start()
     app.run()
 
 if __name__=="__main__":
-    while True:
-        try:
-            ib_main()
-        except EOFError as e:
-            print(datetime.fromtimestamp(int(datetime.now().timestamp())), 'main() error due to :', type(e), e)
-        time.sleep(10)
+    try:
+        ib_main()
+    except EOFError as e:
+        print(datetime.fromtimestamp(int(datetime.now().timestamp())), 'main() error due to :', type(e), e)
+    time.sleep(10)
