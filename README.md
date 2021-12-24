@@ -6,7 +6,10 @@ Hello World, this is my first Github Project
 
 This is a by algotrading project base on Python. With basic script that connect to interatcitve brokers
 
-## Installation
+## Packages Required 
+
+Numpy 
+Pandas 
 
 
 
