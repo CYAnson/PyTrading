@@ -138,7 +138,7 @@ class coverOrder(EWrapper, EClient):
         super().realtimeBar(reqId, time, open_, high, low, close, volume, wap, count)
         print("RealTimeBar. TickerId:", reqId, (time, -1, open_, high, low, close, volume, wap, count))
         self.coverprice = round(int(close))
-        print(self.signal, self.hsi_position)
+        #print(self.signal, self.hsi_position)
 
         if self.signal != False and self.hsi_position != 0:
             if self.hsi_position > 0:
@@ -182,7 +182,6 @@ class coverOrder(EWrapper, EClient):
         self.placeOrder(self.nextOrderId, contract, cover)
         # Update Portfolio
         self.reqAccountUpdates(True, "")
-        print(self.hsi_position)
         return
 
     def stop(self):
@@ -216,6 +215,8 @@ def ib_main_action():
     """app.reqMktData(1, contract, "", False, False, [])
     app.reqAllOpenOrders()"""
     Timer(3, app.stop).start()
+    print(app.isConnected())
+
     app.run()
 
 
@@ -237,21 +238,23 @@ def ib_main_cover():
 
     app.reqRealTimeBars(1, contract, 1, "MIDPOINT", False, [])
     app.reqPositions()
-
     """app.reqMktData(1, contract, "", False, False, [])
     app.reqAllOpenOrders()"""
     Timer(3, app.stop).start()
+    print(app.isConnected())
+
     app.run()
 
 if __name__=="__main__":
-    local_tz = pytz.timezone("Asia/Hong_Kong")
+    ib_main_cover()
+    """local_tz = pytz.timezone("Asia/Hong_Kong")
     while True:
         live_hour = datetime.now(local_tz).hour
         live_mins = datetime.now(local_tz).minute
         live_second = datetime.now(local_tz).second
         time.sleep(1)
         try:
-            if live_hour == 22 and live_mins == 3 and live_second == 0:
+            if live_hour == 20 and live_mins == 49 and live_second == 0:
                 ib_main_action()
             elif live_hour == 22 and live_mins == 5 and live_second == 0:
                 ib_main_cover()
@@ -260,4 +263,4 @@ if __name__=="__main__":
                 print(live_second)
                 pass
         except EOFError as e:
-            print(datetime.fromtimestamp(int(datetime.now().timestamp())), 'main() error due to :', type(e), e)
+            print(datetime.fromtimestamp(int(datetime.now().timestamp())), 'main() error due to :', type(e), e)"""
