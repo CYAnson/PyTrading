@@ -11,8 +11,3 @@ This is a by algotrading project base on Python. With basic script that connect 
 Numpy 
 Pandas 
 
-
-
-```bash
-pip install foobar
-```
